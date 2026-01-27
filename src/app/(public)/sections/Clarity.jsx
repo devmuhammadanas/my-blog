@@ -24,7 +24,7 @@ const Clarity = () => {
             <h2 className='font-semibold text-[clamp(1.5rem,6vw,3.5rem)] leading-[clamp(1.75rem,7vw,4.375rem)] text-center'>
                 Built for clarity<br /> Designed for action
             </h2>
-            <div className='flex border-2 flex-wrap justify-center lg:flex-nowrap gap-[16px]'>
+            <div className='flex flex-wrap justify-center lg:flex-nowrap gap-[16px]'>
 
                 {
                     cardData.map((item, i) => {
