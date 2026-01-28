@@ -5,7 +5,7 @@ import Image from 'next/image'
 const Whychose = () => {
     return (
         <div className='flex justify-center items-center py-[100px] px-[20px]'>
-            <div className='w-[75%] flex flex-wrap lg:flex-nowrap items-center rounded-2xl bg-sky-200 p-[20px] gap-[30px]'>
+            <div className='w-[75%] flex flex-wrap lg:flex-nowrap items-center justify-center rounded-2xl bg-sky-200 p-[20px] gap-[30px]'>
                 <Image className='h-auto w-auto' src={whychose} alt='image' />
                 <div className='flex flex-col gap-[32px]'>
                     <div className='flex flex-col gap-[16px]'>

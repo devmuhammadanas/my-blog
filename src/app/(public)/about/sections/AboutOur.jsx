@@ -1,9 +1,12 @@
-import { Globe, HeartHandshake, SquareArrowUpRight } from "lucide-react";
 import React from 'react'
+import { Globe, Leaf, SquareArrowUpRight } from "lucide-react";
+import { HeartHandshake } from 'lucide-react';
 
-const Clarity = () => {
+
+const AboutOur = () => {
+
     const cardData = [
-         {
+        {
             icon: HeartHandshake,
             heading: "Clarity drives action",
             text: "We believe better decisions start with better data—measured, visible, and trusted.",
@@ -19,10 +22,11 @@ const Clarity = () => {
             text: "We support real-world momentum—helping organizations move from ambition to measurable change.",
         },
     ];
+
     return (
-        <div className='bg-gradient-to-l from-[rgba(199,206,209,1)] to-[rgba(237,221,83,1)] flex flex-col justify-center py-[100px] px-[20px] gap-[40px]'>
+        <div className='bg-white flex flex-col justify-center py-[100px] px-[20px] gap-[40px]'>
             <h2 className='font-semibold text-[clamp(1.5rem,6vw,3.5rem)] leading-[clamp(1.75rem,7vw,4.375rem)] text-center'>
-                Built for clarity<br /> Designed for action
+                Our values
             </h2>
             <div className='flex flex-wrap justify-center lg:flex-nowrap gap-[16px]'>
 
@@ -31,7 +35,7 @@ const Clarity = () => {
                         return (
                             <div
                                 key={i}
-                                className="rounded-2xl w-full lg:w-1/3 gap-[16px] p-[40px] bg-white flex flex-col"
+                                className="rounded-2xl w-full lg:w-1/3 gap-[16px] p-[40px] bg-gray-100 flex flex-col"
                             >
                                 <item.icon size={32} />
                                 <div className="flex flex-col gap-[6px]">
@@ -49,4 +53,4 @@ const Clarity = () => {
     )
 }
 
-export default Clarity
+export default AboutOur
