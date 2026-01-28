@@ -33,7 +33,7 @@ const EveryThink = () => {
             <h2 className='font-semibold text-[clamp(1.5rem,4vw,3.5rem)] leading-[clamp(1.75rem,5vw,4.375rem)] text-center'>
                 Everything you need to measure,<br /> model, and act on sustainability
             </h2>
-            <div className='flex flex-wrap gap-[40px]'>
+            <div className='flex justify-center flex-wrap gap-[40px]'>
                 <div>
                     <Image src={everythink} alt='image' />
                 </div>
