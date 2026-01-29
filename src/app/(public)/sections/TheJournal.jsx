@@ -36,7 +36,7 @@ const TheJournal = () => {
                         return (
                             <div key={i}>
                                 <div className='flex py-[26px] gap-[10px]'>
-                                    <Image src={e.image} width={200} height={100} alt='image' />
+                                    <Image className='rounded-2xl' src={e.image} width={200} height={100} alt='image' />
                                     <div className='flex flex-col gap-[8px]'>
                                         <p className='text-black text-[16px] leading-[20px] font-bold'>{e.heading}</p>
                                         <p className='text-[12px] leading-[16px] text-gray-400'>{e.text}</p>
