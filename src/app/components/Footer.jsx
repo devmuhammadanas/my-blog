@@ -14,7 +14,6 @@ const Footer = () => {
                     <li><Link href="/about">About</Link></li>
                     <li><Link href="/blog">Blog</Link></li>
                     <li><Link href="/career">Career</Link></li>
-                    <li><Link href="/journey">Journey</Link></li>
                     <li><Link href="/contact">Contact</Link></li>
                 </ul>
                 <p className='text-[16px] leading-[22px]'>© {new Date().getFullYear()}  ·  All rights reserved</p>
