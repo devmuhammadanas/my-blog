@@ -1,9 +1,76 @@
-import Footer from "@/app/components/Footer";
+"use client";
 import Header from "@/app/components/Header";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useAuthContext } from "../../../../useContext/AuthContext";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/lib/fireBaseConfig";
+import { useRouter } from "next/navigation";
+
+const initialData = {
+  fullName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
 
 const SignUp = () => {
+  const { isAuth, setState } = useAuthContext();
+  // const [uersData, setUsersData] = useState([]);
+  const [inputData, setInputData] = useState(initialData);
+
+  const handleInputChange = (e) => {
+    setInputData((s) => ({ ...s, [e.target.name]: e.target.value }));
+  };
+
+  
+    const router = useRouter();
+
+    useEffect(() => {
+      if (isAuth) {
+        router.replace("/");
+      }
+    }, [isAuth]);
+    
+  const handleSubmit = (e) => {
+    const { fullName, email, password, confirmPassword } = inputData;
+    e.preventDefault();
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (fullName.length < 3) {
+      return toast.error("Your name must be at least 3 characters long");
+    }
+    if (!emailRegex.test(email)) {
+      return toast.error("Please enter a valid email address");
+    }
+    if (password.length < 6) {
+      return toast.error("Your Password length least 3 characters long ");
+    }
+    if (confirmPassword !== password) {
+      return toast.error("Your password doesn't match");
+    }
+
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed up
+        const user = userCredential.user;
+        setState({ isAuth: true, user: { email: user.email, uid: user.uid } });
+        toast.success("Signup successful");
+        // ...
+      })
+      .catch((error) => {
+        if (error.code === "auth/email-already-in-use") {
+          toast.error("Email already exists");
+        } else {
+          toast.error(error.message);
+        }
+      });
+
+    setInputData(initialData);
+  };
+
   return (
     <div className="min-h-[100vh] w-full flex flex-col bg-gradient-to-b from-[#A8D3FF] to-[#FFF4DF]">
       <Header />
@@ -14,38 +81,47 @@ const SignUp = () => {
 
             <form className="flex flex-col gap-3">
               <input
-                type="full name"
-                name="full name"
+                type="text"
+                name="fullName"
+                value={inputData.fullName}
                 placeholder="Full name address"
                 required
                 className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-black"
+                onChange={handleInputChange}
               />
               <input
                 type="email"
                 name="email"
+                value={inputData.email}
                 placeholder="Email address"
                 required
                 className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-black"
+                onChange={handleInputChange}
               />
 
               <input
                 type="password"
                 name="password"
+                value={inputData.password}
                 placeholder="Password"
                 required
                 className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-black"
+                onChange={handleInputChange}
               />
               <input
                 type="password"
                 name="confirmPassword"
+                value={inputData.confirmPassword}
                 placeholder="Confirm Password"
                 required
                 className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-black"
+                onChange={handleInputChange}
               />
 
               <button
                 type="submit"
                 className="mt-1 bg-black text-white py-3 rounded-xl hover:opacity-90 transition"
+                onClick={handleSubmit}
               >
                 Sign Up
               </button>

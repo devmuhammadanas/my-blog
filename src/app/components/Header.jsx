@@ -1,8 +1,11 @@
 "use client";
 import Link from "next/link";
 import React, { useState } from "react";
+import { useAuthContext } from "../../../useContext/AuthContext";
 
 const Header = ({ className }) => {
+  const { isAuth, logout } = useAuthContext();
+
   const [showManu, setShowManu] = useState(false);
 
   return (
@@ -29,13 +32,41 @@ const Header = ({ className }) => {
           <li>
             <Link href="/contact">Contact</Link>
           </li>
-          <li className="text-[18px] leading-[22px] font-bold">
-            <Link href="/login">Login</Link>
-          </li>
-          <li className="text-[18px] leading-[22px] font-bold">
-            <Link href="/signUp">Sing Up</Link>
-          </li>
         </ul>
+        {isAuth ? (
+          <div className="flex hidden md:flex gap-[20px]">
+            <Link
+              className="text-[18px] shadow-2xl leading-[22px] font-bold"
+              href="/dashboard"
+            >
+              DashBoard
+            </Link>
+
+            <Link
+              className="text-[18px] shadow-2xl leading-[22px] font-bold"
+              href="/signUp"
+              onClick={logout}
+            >
+              LogOut
+            </Link>
+          </div>
+        ) : (
+          <div className="flex hidden md:flex gap-[20px]">
+            <Link
+              className="text-[18px] shadow-2xl leading-[22px] font-bold"
+              href="/login"
+            >
+              Login
+            </Link>
+
+            <Link
+              className="text-[18px] shadow-2xl leading-[22px] font-bold"
+              href="/signUp"
+            >
+              Sing Up
+            </Link>
+          </div>
+        )}
         <button
           className="md:hidden flex items-center"
           onClick={() => setShowManu(!showManu)}
@@ -70,29 +101,41 @@ const Header = ({ className }) => {
             <li>
               <Link href="/contact">Contact</Link>
             </li>
-
-            {/* <li className="text-[18px] leading-[22px] font-bold">
-              <Link href="/login">Login</Link>
-            </li>
-            <li className="text-[18px] leading-[22px] font-bold">
-              <Link href="/signUp">Sing Up</Link>
-            </li> */}
           </ul>
-          <div className="flex mt-[10px] gap-[20px]">
-            <Link
-              className="text-[18px] leading-[22px] font-bold"
-              href="/login"
-            >
-              Login
-            </Link>
+          {isAuth ? (
+            <div className="flex mt-[6px] gap-[20px]">
+              <Link
+                className="text-[18px] leading-[22px] font-bold"
+                href="/dashboard"
+              >
+                DashBoard
+              </Link>
 
-            <Link
-              className="text-[18px] leading-[22px] font-bold"
-              href="/signUp"
-            >
-              Sing Up
-            </Link>
-          </div>
+              <Link
+                className="text-[18px] leading-[22px] font-bold"
+                href="/signUp"
+                onClick={logout}
+              >
+                LogOut
+              </Link>
+            </div>
+          ) : (
+            <div className="flex mt-[6px] gap-[20px]">
+              <Link
+                className="text-[18px] leading-[22px] font-bold"
+                href="/login"
+              >
+                Login
+              </Link>
+
+              <Link
+                className="text-[18px] leading-[22px] font-bold"
+                href="/signUp"
+              >
+                Sing Up
+              </Link>
+            </div>
+          )}
         </div>
       )}
     </header>
