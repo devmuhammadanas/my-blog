@@ -1,9 +1,74 @@
-import Footer from "@/app/components/Footer";
+"use client";
 import Header from "@/app/components/Header";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { useAuthContext } from "../../../../useContext/AuthContext";
+import { useRouter } from "next/navigation";
+import { auth } from "@/lib/fireBaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
+
+const initialData = { email: "", password: "" };
 
 const Login = () => {
+  const { isAuth, setState } = useAuthContext();
+
+  const [usersData, setUserData] = useState([]);
+  const [inputData, setInputData] = useState(initialData);
+
+  console.log("State", isAuth);
+
+  const handleInputChange = (e) => {
+    setInputData((s) => ({ ...s, [e.target.name]: e.target.value }));
+  };
+
+  console.log("inputData:", inputData);
+  console.log("usersData:", usersData);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuth) {
+      router.replace("/");
+    }
+  }, [isAuth]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const { email, password } = inputData;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+      return toast.error("please enter your Email");
+    }
+    if (!emailRegex.test(email)) {
+      return toast.error("Please enter a valid email address");
+    }
+    if (!password) {
+      return toast.error("please Enter Your Password");
+    }
+    if (password.length < 6) {
+      return toast.error("Password Must be at Least 6 Characters");
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        setUserData((prev) => [...prev, inputData]);
+        setState({ isAuth: true, user: { email: user.email, uid: user.uid } });
+        setInputData(initialData);
+        toast.success("Login SuccessFully.");
+        // ...
+      })
+      .catch((error) => {
+        console.log('error.code', error.code)
+        console.log('error.message', error.message)
+        toast.error('invalid email or password');
+      });
+  };
+
   return (
     <div className="min-h-[100vh] w-full flex flex-col bg-gradient-to-b from-[#A8D3FF] to-[#FFF4DF]">
       <Header />
@@ -16,22 +81,27 @@ const Login = () => {
               <input
                 type="email"
                 name="email"
+                value={inputData.email}
                 placeholder="Email address"
                 required
                 className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-black"
+                onChange={handleInputChange}
               />
 
               <input
                 type="password"
                 name="password"
+                value={inputData.password}
                 placeholder="Password"
                 required
                 className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-black"
+                onChange={handleInputChange}
               />
 
               <button
                 type="submit"
                 className="mt-2 bg-black text-white py-3 rounded-xl hover:opacity-90 transition"
+                onClick={handleSubmit}
               >
                 Sign In
               </button>
