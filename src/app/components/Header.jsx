@@ -63,7 +63,7 @@ const Header = ({ className }) => {
               className="text-[18px] shadow-2xl leading-[22px] font-bold"
               href="/signUp"
             >
-              Sing Up
+              Sign Up
             </Link>
           </div>
         )}
@@ -132,7 +132,7 @@ const Header = ({ className }) => {
                 className="text-[18px] leading-[22px] font-bold"
                 href="/signUp"
               >
-                Sing Up
+                Sign Up
               </Link>
             </div>
           )}

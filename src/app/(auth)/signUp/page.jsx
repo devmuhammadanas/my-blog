@@ -1,12 +1,17 @@
 "use client";
 import Header from "@/app/components/Header";
+
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import { useAuthContext } from "../../../../useContext/AuthContext";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/lib/fireBaseConfig";
 import { useRouter } from "next/navigation";
+import { useAuthContext } from "../../../../useContext/AuthContext";
+
+import { toast } from "react-toastify";
+
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth, firestore } from "@/lib/fireBaseConfig";
+import { doc, setDoc } from "firebase/firestore";
+
 
 const initialData = {
   fullName: "",
@@ -24,18 +29,18 @@ const SignUp = () => {
     setInputData((s) => ({ ...s, [e.target.name]: e.target.value }));
   };
 
-  
-    const router = useRouter();
+  const router = useRouter();
 
-    useEffect(() => {
-      if (isAuth) {
-        router.replace("/");
-      }
-    }, [isAuth]);
-    
+  useEffect(() => {
+    if (isAuth) {
+      router.replace("/");
+    }
+  }, [isAuth]);
+
   const handleSubmit = (e) => {
-    const { fullName, email, password, confirmPassword } = inputData;
     e.preventDefault();
+    const { fullName, email, password, confirmPassword } = inputData;
+    const userData = {fullName, email, password, confirmPassword}
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -54,11 +59,12 @@ const SignUp = () => {
 
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        // Signed up
+
         const user = userCredential.user;
         setState({ isAuth: true, user: { email: user.email, uid: user.uid } });
+        createDocument({...userData, uid: user.uid})
+
         toast.success("Signup successful");
-        // ...
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
@@ -70,6 +76,20 @@ const SignUp = () => {
 
     setInputData(initialData);
   };
+
+  const createDocument = async (userData) => {
+
+    console.log('userData =>', userData)
+    const user = {...userData, status: 'SignedUp', time: new Date()}
+
+    try {
+      await setDoc(doc(firestore, 'users', user.uid), user)
+    } catch (error) {
+      console.log('error creating document', error)
+      
+    }
+
+  }
 
   return (
     <div className="min-h-[100vh] w-full flex flex-col bg-gradient-to-b from-[#A8D3FF] to-[#FFF4DF]">
