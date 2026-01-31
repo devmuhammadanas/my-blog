@@ -5,13 +5,14 @@ import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../../../../useContext/AuthContext";
 import { useRouter } from "next/navigation";
-import { auth } from "@/lib/fireBaseConfig";
+import { auth, firestore } from "@/lib/fireBaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 const initialData = { email: "", password: "" };
 
 const Login = () => {
-  const { isAuth, setState } = useAuthContext();
+  const { isAuth, user, setState, } = useAuthContext();
 
   const [usersData, setUserData] = useState([]);
   const [inputData, setInputData] = useState(initialData);
@@ -53,11 +54,12 @@ const Login = () => {
     }
 
     signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then ( async (userCredential) => {
         // Signed in
         const user = userCredential.user;
         setUserData((prev) => [...prev, inputData]);
         setState({ isAuth: true, user: { email: user.email, uid: user.uid } });
+        await setDoc(doc(firestore, 'users', user.uid), {status: 'LoggedIn', time: new Date()}, { merge: true })
         setInputData(initialData);
         toast.success("Login SuccessFully.");
         // ...

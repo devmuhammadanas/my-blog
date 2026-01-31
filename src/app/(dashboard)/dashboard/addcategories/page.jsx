@@ -1,13 +1,10 @@
-import { BlogpostsCard, UseDiviceCard } from "@/app/components/dashboardCards/cards";
-import LineGraph from "@/app/components/dashboardCards/Chart";
 import SideBar from "@/app/components/SideBar";
-import { Search } from "lucide-react";
 import { UserPlus, StickyNote, Heart, Eye } from "lucide-react";
 import { UserRoundPen } from "lucide-react";
-import { House } from "lucide-react";
+import { Search } from "lucide-react";
 import React from "react";
 
-const Dashboard = () => {
+const addcCategories = () => {
   const userInfo = [
     {
       icon: UserPlus,
@@ -38,11 +35,12 @@ const Dashboard = () => {
       textcolor: "text-orange-400",
     },
   ];
-
   return (
     <div className="flex w-full h-screen bg-[#F2F2F2]">
       <SideBar />
       <div className="flex flex-col overflow-y-auto p-1.5 grow-1">
+
+
         <div className="flex justify-between shadow-2xl bg-white py-2.5 px-3.5">
           <div className="bg-gray-100 gap-1.5 w-1/3 flex items-center py-2 px-3 text-xs rounded-full">
             <Search className="text-gray-400 h-[12px] w-[12px]" />
@@ -57,8 +55,8 @@ const Dashboard = () => {
             <UserRoundPen />
           </div>
         </div>
-
-        <div className="flex p-4 gap-4.5">
+         
+         <div className="flex p-4 gap-4.5">
           {userInfo.map((e, i) => {
             let Icon = e.icon;
             return (
@@ -81,19 +79,10 @@ const Dashboard = () => {
             );
           })}
         </div>
-        <div className="w-full">
-          <LineGraph />
-        </div>
-
-        <div className="flex p-2.5 gap-5">
-          <BlogpostsCard />
-          <UseDiviceCard />
-        </div>
+       
       </div>
     </div>
   );
 };
 
-export default Dashboard;
-
-
+export default addcCategories;
