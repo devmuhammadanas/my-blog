@@ -16,6 +16,7 @@ export default function AddpostSidbar() {
     const [imageFile, setImageFile] = useState(null);
 
     const handleImageChange = (e) => {
+
         const file = e.target.files[0];
     
         if (file && file.type.startsWith('image/')) {
