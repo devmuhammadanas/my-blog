@@ -1,57 +1,75 @@
+'use client'
 import Header from "@/app/components/Header";
 import Image from "next/image";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import blogHero from "@/../public/Blag Page/blog Hero/blogHero.svg";
 import blogPostImage from "@/../public/Blag Page/blog post/postImage.svg";
 import blogPostImage1 from "@/../public/Blag Page/blog post/1postImage.svg";
 import blogPostImage2 from "@/../public/Blag Page/blog post/2postImage.svg";
 import Footer from "@/app/components/Footer";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { firestore } from "@/lib/fireBaseConfig";
+import { useAuthContext } from "../../../../../useContext/AuthContext";
 
 const BlogHero = () => {
-  const blogData = [
+  const [blogData, setBlogData] = useState([
     {
       title: "How to Build a Climate-Ready Data Stack",
-      description:
+      content:
         "A practical guide for sustainability teams on integrating emissions, waste, and energy data into modern workflows.",
       info: "Insights 4 min",
       image: blogPostImage,
     },
     {
       title: "How to Build a Climate-Ready Data Stack",
-      description:
+      content:
         "A practical guide for sustainability teams on integrating emissions, waste, and energy data into modern workflows.",
       info: "Insights 4 min",
       image: blogPostImage1,
     },
     {
       title: "How to Build a Climate-Ready Data Stack",
-      description:
+      content:
         "A practical guide for sustainability teams on integrating emissions, waste, and energy data into modern workflows.",
       info: "Insights 4 min",
       image: blogPostImage2,
     },
-    {
-      title: "How to Build a Climate-Ready Data Stack",
-      description:
-        "A practical guide for sustainability teams on integrating emissions, waste, and energy data into modern workflows.",
-      info: "Insights 4 min",
-      image: blogPostImage,
-    },
-    {
-      title: "How to Build a Climate-Ready Data Stack",
-      description:
-        "A practical guide for sustainability teams on integrating emissions, waste, and energy data into modern workflows.",
-      info: "Insights 4 min",
-      image: blogPostImage1,
-    },
-    {
-      title: "How to Build a Climate-Ready Data Stack",
-      description:
-        "A practical guide for sustainability teams on integrating emissions, waste, and energy data into modern workflows.",
-      info: "Insights 4 min",
-      image: blogPostImage2,
-    },
-  ];
+  ]);
+
+  const { user } = useAuthContext()
+
+
+  console.log("blogData", blogData)
+
+  useEffect(() => {
+    if (!user?.uid) return;
+
+    const getData = async () => {
+      const q = query(collection(firestore, "blogPost"), where("uid", "==", user.uid));
+
+      let array = []
+      const querySnapshot = await getDocs(q);
+      console.log("querySnapshot => ", querySnapshot)
+      console.log("docs length:", querySnapshot.size);
+
+
+      querySnapshot.forEach((doc,) => {
+        console.log("imp", doc.data());
+        array.push(doc.data());
+      });
+
+      console.log("array", array)
+      setBlogData((s) => [...s, ...array]);
+    }
+
+    getData()
+
+  }, [user])
+  console.log("blogData =>", blogData)
+
+
+
+
 
   return (
     <div className="flex flex-col">
@@ -69,8 +87,8 @@ const BlogHero = () => {
                 className="flex flex-col gap-[20px] mb-[20px] w-full lg:w-[calc(50%-8px)]"
               >
                 <Image
-                  height={0}
-                  width={0}
+                  height={50}
+                  width={50}
                   src={e.image}
                   alt="blogHero image"
                   className="h-auto w-auto rounded-2xl"
@@ -87,7 +105,7 @@ const BlogHero = () => {
 
                 <div>
                   <p className="text-[16px] leading-[20px] text-gray-700 font-normal">
-                    {e.description}
+                    {e.content}
                   </p>
                 </div>
               </div>

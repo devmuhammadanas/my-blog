@@ -1,4 +1,4 @@
-export const BlogpostsCard = () => {
+export const BlogpostsCard = ({className=''}) => {
   const postsData = [
     {
       title: "Your Rooftop Garden Could Be a Solar",
@@ -23,7 +23,7 @@ export const BlogpostsCard = () => {
     },
   ];
   return (
-    <div className="w-2/3 p-4.5 bg-white rounded-2xl shadow-xl">
+    <div className={`${className} p-4.5 bg-white rounded-2xl shadow-xl`}>
       <div className="grid grid-cols-12 text-sm text-gray-500 font-medium pb-1">
         <div className="col-span-6">Article Title</div>
         <div className="col-span-2">Post Date</div>

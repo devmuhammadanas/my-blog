@@ -1,3 +1,5 @@
+import AddpostSidbar from "@/app/components/dashboardCards/AddpostSidebar";
+import { BlogpostsCard } from "@/app/components/dashboardCards/cards";
 import SideBar from "@/app/components/SideBar";
 import { UserPlus, StickyNote, Heart, Eye } from "lucide-react";
 import { UserRoundPen } from "lucide-react";
@@ -55,8 +57,8 @@ const AddPost = () => {
             <UserRoundPen />
           </div>
         </div>
-         
-         <div className="flex p-4 gap-4.5">
+
+        <div className="flex p-4 gap-4.5">
           {userInfo.map((e, i) => {
             let Icon = e.icon;
             return (
@@ -79,7 +81,14 @@ const AddPost = () => {
             );
           })}
         </div>
-       
+
+        <div className="p-7 flex justify-end">
+          <AddpostSidbar />
+        </div>
+        <div>
+          <BlogpostsCard className='w-full' />
+        </div>
+
       </div>
     </div>
   );
