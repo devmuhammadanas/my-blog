@@ -1,27 +1,58 @@
-export const BlogpostsCard = ({className=''}) => {
-  const postsData = [
+'use client'
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { useAuthContext } from "../../../../useContext/AuthContext";
+import { firestore } from "@/lib/fireBaseConfig";
+import { LoaderCircle } from "lucide-react";
+
+export const BlogpostsCard = ({ className = '' }) => {
+  const { user } = useAuthContext()
+  const [loading, setLoading] = useState(false)
+  const [postsData, setPostsData] = useState([
     {
       title: "Your Rooftop Garden Could Be a Solar",
-      date: "16 Nov 2021",
-      category: "Science",
+      createdAt: "16 Nov 2021",
+      category: "Design",
       categoryColor: "bg-cyan-100 text-cyan-700",
       comments: "136 Comments",
     },
     {
       title: "Looking for Alien Life? Seek Out Alien Tech",
-      date: "27 Nov 2021",
-      category: "Ideas",
+      createdAt: "27 Nov 2021",
+      category: "Business",
       categoryColor: "bg-blue-100 text-blue-700",
       comments: "108 Comments",
     },
     {
       title: "Why I Love to Scrounge in Video Games",
-      date: "29 Nov 2021",
-      category: "Games",
+      createdAt: "29 Nov 2021",
+      category: "Tech",
       categoryColor: "bg-orange-100 text-orange-700",
       comments: "48 Comments",
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    setLoading(true)
+    if (!user?.uid) return;
+    const getData = async () => {
+      const q = query(collection(firestore, "blogPost"), where("uid", "==", user.uid));
+      let array = []
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        console.log("imp", doc.data());
+        array.push(doc.data());
+      });
+      setLoading(false)
+
+      setPostsData((s) => [...s, ...array]);
+    }
+
+    getData()
+
+  }, [user])
+
   return (
     <div className={`${className} p-4.5 bg-white rounded-2xl shadow-xl`}>
       <div className="grid grid-cols-12 text-sm text-gray-500 font-medium pb-1">
@@ -32,30 +63,39 @@ export const BlogpostsCard = ({className=''}) => {
       </div>
 
       <div className="divide-y">
-        {postsData.map((post, i) => (
+        {postsData.map((e, i) => (
           <div key={i} className="grid grid-cols-12 items-center py-2 gap-2">
             <div className="col-span-6 flex items-center gap-3">
               <div className="w-10 h-10 bg-gray-200 rounded-md" />
               <p className="text-sm font-medium text-gray-500 leading-snug">
-                {post.title}
+                {e.title}
               </p>
             </div>
 
-            <div className="col-span-2 text-sm text-gray-400">{post.date}</div>
+            <div className="col-span-2 text-sm text-gray-400">{new Date(e.createdAt).toLocaleString()}</div>
 
             <div className="col-span-2">
               <span
-                className={`text-xs font-semibold px-3 py-1 rounded-full ${post.categoryColor}`}
+                className={`text-xs font-semibold px-3 py-1 rounded-full {} 
+                  ${e.category == 'Design' && 'bg-blue-100 text-blue-700'
+                  || e.category == 'Business' && 'bg-cyan-100 text-cyan-700'
+                  || e.category == 'Tech' && 'bg-orange-100 text-orange-700'}`}
               >
-                {post.category}
+                {e.category}
               </span>
             </div>
 
             <div className="col-span-2 text-sm text-gray-400">
-              {post.comments}
+              {e.comments}
             </div>
           </div>
         ))}
+
+      </div>
+      <div className="flex justify-center items-center">
+        {
+          loading && <LoaderCircle className="animate-spin " />
+        }
       </div>
     </div>
   );
@@ -70,7 +110,7 @@ export const UseDiviceCard = () => {
   const mobileOffset = circumference - (mobile / 100) * circumference;
 
   return (
-    <div className="w-1/3 p-4.5 bg-white rounded-2xl shadow-xl">
+    <div className="w-1/3 max-h-66 p-4.5 bg-white rounded-2xl shadow-xl">
       <h3 className="text-center text-xs font-semibold text-gray-500 tracking-wider mb-4">
         USED DEVICE
       </h3>

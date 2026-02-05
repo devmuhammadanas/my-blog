@@ -5,6 +5,7 @@ import footerimage from '@/../public/Footer/Footerimage.svg'
 import footerlogo from '@/../public/Footer/footerlogo.svg'
 
 const Footer = () => {
+    const year = new Date().getFullYear()
     return (
         <div className='bg-yellow-300 py-[10px] px-[20px] gap-[20px] flex flex-col'>
 
@@ -16,7 +17,7 @@ const Footer = () => {
                     <li><Link href="/career">Career</Link></li>
                     <li><Link href="/contact">Contact</Link></li>
                 </ul>
-                <p className='text-[16px] leading-[22px]'>© {new Date().getFullYear()}  ·  All rights reserved</p>
+                <p className='text-[16px] leading-[22px]'>© {year}  ·  All rights reserved</p>
             </div>
 
             <Image src={footerimage} alt='footerimage' />

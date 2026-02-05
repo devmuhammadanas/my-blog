@@ -1,3 +1,4 @@
+'use client'
 import AddpostSidbar from "@/app/components/dashboardCards/AddpostSidebar";
 import { BlogpostsCard } from "@/app/components/dashboardCards/cards";
 import SideBar from "@/app/components/SideBar";
@@ -5,8 +6,10 @@ import { UserPlus, StickyNote, Heart, Eye } from "lucide-react";
 import { UserRoundPen } from "lucide-react";
 import { Search } from "lucide-react";
 import React from "react";
+import { useAuthContext } from "../../../../../useContext/AuthContext";
 
 const AddPost = () => {
+  const {user} = useAuthContext()
   const userInfo = [
     {
       icon: UserPlus,
@@ -37,6 +40,8 @@ const AddPost = () => {
       textcolor: "text-orange-400",
     },
   ];
+
+  const profileName = user?.fullName
   return (
     <div className="flex w-full h-screen bg-[#F2F2F2]">
       <SideBar />
@@ -53,7 +58,7 @@ const AddPost = () => {
             />
           </div>
           <div className="flex items-center gap-2.5">
-            <p>Dev Anas</p>
+            <p>{profileName}</p>
             <UserRoundPen />
           </div>
         </div>
