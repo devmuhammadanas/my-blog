@@ -95,7 +95,7 @@ const Dashboard = () => {
 
         <div className="flex p-2.5 gap-5">
           <BlogpostsCard className='w-2/3'/>
-          <UseDiviceCard />
+          {/* <UseDiviceCard /> */}
         </div>
       </div>
     </div>
