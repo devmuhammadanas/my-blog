@@ -6,71 +6,108 @@ import { StickyNote } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../../../../useContext/AuthContext";
+import { supabase } from "@/lib/supabaseClient";
+import { LoaderCircle } from "lucide-react";
 
 const initialBlogData = { title: '', slug: '', category: '', content: '' }
 
 export default function AddpostSidbar() {
     const [open, setOpen] = useState(false);
-    const {user} = useAuthContext()
-
+    const { user } = useAuthContext()
     const [imageFile, setImageFile] = useState(null);
+    const [loading, setLoading] = useState(false);
 
-    const handleImageChange = (e) => {
+     const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-        const file = e.target.files[0];
-    
-        if (file && file.type.startsWith('image/')) {
-          const reader = new FileReader();
-    
-          reader.onloadend = () => {
-            setImageFile(reader.result); // Full Base64 string with data prefix
-          };
-    
-          reader.readAsDataURL(file); // Converts image to Base64
-        } else {
-          alert("Please upload an image file.");
-        }
-      };
+    if (!file.type.startsWith("image/")) {
+      toast.error("Only image files are allowed");
+      return;
+    }
+
+    setImageFile(file);
+  };
+
+  async function uploadImage(file, userId) {
+    const ext = file.name.split(".").pop();
+    const fileName = `${userId}/${Date.now()}.${ext}`;
+
+    const { error } = await supabase.storage
+      .from("blog-images")
+      .upload(fileName, file);
+
+    if (error) {
+      throw error;
+    }
+
+    const { data } = supabase.storage
+      .from("blog-images")
+      .getPublicUrl(fileName);
+
+    return data.publicUrl;
+  }
 
     const [blogData, setBlogData] = useState(initialBlogData)
-    // const [blogsPostsData, setBlogsPostData] = useState([])
-
-    const handleChange = (e) => { 
-        setBlogData((s) => ({ ...s, [e.target.name]: e.target.value }) )
-    }
-
-    const handleSubmit = async(e) => {
-        e.preventDefault()
-        // setBlogsPostData( (s) => [...s, blogData])
-
-        const {title, slug, category, content,} = blogData
-
-
-        if (!title) {return toast.error('Enter your Title')}
-        if (!slug) {return toast.error('Enter your Sulg')}
-        if (!category) {return toast.error('Enter your Category')}
-        if (!content) {return toast.error('Enter your Content')}
-
-        const id = Math.random().toString(36)
-
-        const userBlogsData = {...blogData, time: new Date(), ImageUrl: imageFile, id, uid:user.uid }
-        try {
-            await setDoc(doc(firestore, "blogPost", id), userBlogsData);
-            toast.success('Your content Has been SuccessFully Add')
-            
-        } catch (error) {
-            console.log(error)
-            console.log('Create Post Faild', error.message)
-            toast.error('Create Post Faild')
-            
-        }
-
-         
-       setBlogData(initialBlogData)
-    }
-
-
     
+
+     const handleChange = (e) => {
+    setBlogData((s) => ({
+      ...s,
+      [e.target.name]: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!user) {
+      toast.error("You must be logged in");
+      return;
+    }
+
+    const { title, slug, category, content } = blogData;
+
+    if (!title || !slug || !category || !content) {
+      toast.error("All fields are required");
+      return;
+    }
+
+    if (!imageFile) {
+      toast.error("Feature image is required");
+      return;
+    }
+
+    try {
+      // Upload image to Supabase
+      const imageUrl = await uploadImage(imageFile, user.uid);
+
+      // Save blog to Firestore
+      const id = crypto.randomUUID();
+      setLoading(true)
+
+      await setDoc(doc(firestore, "blogPost", id), {
+        ...blogData,
+        id,
+        uid: user.uid,
+        imageUrl,
+        createdAt: new Date().getTime(),
+      });
+
+      toast.success("Post published successfully");
+      setBlogData(initialBlogData);
+      setImageFile(null);
+      setOpen(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to publish post");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+
 
 
     return (
@@ -114,8 +151,9 @@ export default function AddpostSidbar() {
                 <form className="p-6 space-y-5 overflow-y-auto h-[calc(100vh-80px)]">
                     <div>
                         <label className="block text-sm font-medium mb-1">Add Feature Image</label>
-                        <input type="file"
-                        onChange={handleImageChange}
+                        <input 
+                            type="file"
+                            onChange={handleImageChange}
                             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
                         />
                     </div>
@@ -128,7 +166,7 @@ export default function AddpostSidbar() {
                             type="text"
                             className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
                             placeholder="Post title"
-                            />
+                        />
                     </div>
 
                     <div>
@@ -140,18 +178,18 @@ export default function AddpostSidbar() {
                             value={blogData.slug}
                             className="w-full border rounded-lg px-3 py-2"
                             placeholder="post-slug"
-                            />
+                        />
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium mb-1">Category</label>
                         <select
-                        name="category"
-                        value={blogData.category}
-                        onChange={handleChange}
-                         className="w-full border rounded-lg px-3 py-2">
-                            <option>Tech</option>
+                            name="category"
+                            value={blogData.category}
+                            onChange={handleChange}
+                            className="w-full border rounded-lg px-3 py-2">
                             <option>Design</option>
+                            <option>Tech</option>
                             <option>Business</option>
                         </select>
                     </div>
@@ -164,15 +202,18 @@ export default function AddpostSidbar() {
                             onChange={handleChange}
                             className="w-full border rounded-lg px-3 py-2 min-h-[180px]"
                             placeholder="Write your post..."
-                            />
+                        />
                     </div>
 
                     <div className="flex gap-3 pt-4">
                         <button
                             type="submit"
-                            className="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl font-medium"
+                            className="flex justify-center items-center gap-2.5 bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl font-medium"
                             onClick={handleSubmit}
                         >
+                            {
+                              loading && <LoaderCircle className="animate-spin" />
+                            }
                             Publish
                         </button>
 

@@ -1,3 +1,4 @@
+'use client'
 import { BlogpostsCard, UseDiviceCard } from "@/app/components/dashboardCards/cards";
 import LineGraph from "@/app/components/dashboardCards/Chart";
 import SideBar from "@/app/components/SideBar";
@@ -5,9 +6,14 @@ import { Search } from "lucide-react";
 import { UserPlus, StickyNote, Heart, Eye } from "lucide-react";
 import { UserRoundPen } from "lucide-react";
 import { House } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useAuthContext } from "../../../../useContext/AuthContext";
+import { collection, doc, getDoc, query } from "firebase/firestore";
+import { firestore } from "@/lib/fireBaseConfig";
 
 const Dashboard = () => {
+  const {user} = useAuthContext()
+  const [userData, setUserData] = useState([])
   const userInfo = [
     {
       icon: UserPlus,
@@ -39,6 +45,8 @@ const Dashboard = () => {
     },
   ];
 
+ const profileName = user?.fullName
+
   return (
     <div className="flex w-full h-screen bg-[#F2F2F2]">
       <SideBar />
@@ -53,7 +61,7 @@ const Dashboard = () => {
             />
           </div>
           <div className="flex items-center gap-2.5">
-            <p>Dev Anas</p>
+                  <p>{profileName}</p>
             <UserRoundPen />
           </div>
         </div>
