@@ -8,14 +8,22 @@ import { useRouter } from "next/navigation";
 import { auth, firestore } from "@/lib/fireBaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { LoaderCircle } from "lucide-react";
 
 const initialData = { email: "", password: "" };
 
 const Login = () => {
   const { isAuth, user, setState, } = useAuthContext();
+  const [year, setYear] = useState(null);
+
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
 
   const [usersData, setUserData] = useState([]);
   const [inputData, setInputData] = useState(initialData);
+  const [loading, setLoading] = useState(false);
 
   console.log("State", isAuth);
 
@@ -27,12 +35,6 @@ const Login = () => {
   console.log("usersData:", usersData);
 
   const router = useRouter();
-
-  useEffect(() => {
-    if (isAuth) {
-      router.replace("/");
-    }
-  }, [isAuth]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -53,15 +55,19 @@ const Login = () => {
       return toast.error("Password Must be at Least 6 Characters");
     }
 
+    setLoading(true)
+
     signInWithEmailAndPassword(auth, email, password)
-      .then ( async (userCredential) => {
+      .then(async (userCredential) => {
         // Signed in
         const user = userCredential.user;
-        setUserData((prev) => [...prev, inputData]);
+        await setDoc(doc(firestore, 'users', user.uid), { status: 'LoggedIn', time: new Date() }, { merge: true })
         setState({ isAuth: true, user: { email: user.email, uid: user.uid } });
-        await setDoc(doc(firestore, 'users', user.uid), {status: 'LoggedIn', time: new Date()}, { merge: true })
+        setUserData((prev) => [...prev, inputData]);
         setInputData(initialData);
         toast.success("Login SuccessFully.");
+        setLoading(false)
+        router.replace("/");
         // ...
       })
       .catch((error) => {
@@ -69,6 +75,7 @@ const Login = () => {
         console.log('error.message', error.message)
         toast.error('invalid email or password');
       });
+
   };
 
   return (
@@ -102,9 +109,12 @@ const Login = () => {
 
               <button
                 type="submit"
-                className="mt-2 bg-black text-white py-3 rounded-xl hover:opacity-90 transition"
+                className="mt-2 flex justify-center items-center gap-2.5 bg-black text-white py-3 rounded-xl hover:opacity-90 transition"
                 onClick={handleSubmit}
               >
+                {
+                  loading && <LoaderCircle className='animate-spin' />
+                }
                 Sign In
               </button>
             </form>
@@ -141,7 +151,7 @@ const Login = () => {
           </li>
         </ul>
         <p className="text-[16px] leading-[22px]">
-          © {new Date().getFullYear()} · All rights reserved
+          © {year} · All rights reserved
         </p>
       </div>
     </div>

@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, firestore } from "@/lib/fireBaseConfig";
 import { doc, setDoc } from "firebase/firestore";
+import { LoaderCircle } from "lucide-react";
 
 
 const initialData = {
@@ -24,6 +25,8 @@ const SignUp = () => {
   const { isAuth, setState } = useAuthContext();
   // const [uersData, setUsersData] = useState([]);
   const [inputData, setInputData] = useState(initialData);
+  const [loading, setLoading] = useState(false);
+  const route = useRouter()
 
   const handleInputChange = (e) => {
     setInputData((s) => ({ ...s, [e.target.name]: e.target.value }));
@@ -40,7 +43,7 @@ const SignUp = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const { fullName, email, password, confirmPassword } = inputData;
-    const userData = {fullName, email, password, confirmPassword}
+    const userData = { fullName, email, password, confirmPassword }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -57,14 +60,16 @@ const SignUp = () => {
       return toast.error("Your password doesn't match");
     }
 
+    setLoading(true)
     createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
+      .then(async (userCredential) => {
 
         const user = userCredential.user;
         setState({ isAuth: true, user: { email: user.email, uid: user.uid } });
-        createDocument({...userData, uid: user.uid})
-
+        createDocument({ ...userData, uid: user.uid })
         toast.success("Signup successful");
+
+
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
@@ -74,20 +79,22 @@ const SignUp = () => {
         }
       });
 
-    setInputData(initialData);
-  };
-
-  const createDocument = async (userData) => {
-
-    console.log('userData =>', userData)
-    const user = {...userData, status: 'SignedUp', time: new Date()}
-
-    try {
-      await setDoc(doc(firestore, 'users', user.uid), user)
-    } catch (error) {
-      console.log('error creating document', error)
+    };
+    
+    const createDocument = async (userData) => {
       
-    }
+      console.log('userData =>', userData)
+      const user = { ...userData, status: 'SignedUp', time: new Date() }
+      
+      try {
+        await setDoc(doc(firestore, 'users', user.uid), user)
+        route.replace('/')
+        setLoading(false)
+      } catch (error) {
+        console.log('error creating document', error)
+        
+      }
+      setInputData(initialData);
 
   }
 
@@ -140,9 +147,10 @@ const SignUp = () => {
 
               <button
                 type="submit"
-                className="mt-1 bg-black text-white py-3 rounded-xl hover:opacity-90 transition"
+                className="mt-1 flex justify-center items-center gap-2.5 bg-black text-white py-3 rounded-xl hover:opacity-90 transition"
                 onClick={handleSubmit}
               >
+                {loading && <LoaderCircle className="animate-spin" />}
                 Sign Up
               </button>
             </form>
