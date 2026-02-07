@@ -1,74 +1,18 @@
 'use client'
 import Header from "@/app/components/Header";
 import Image from "next/image";
-import React, { useCallback, useEffect, useState } from "react";
 import blogHero from "@/../public/Blag Page/blog Hero/blogHero.svg";
-import blogPostImage from "@/../public/Blag Page/blog post/postImage.svg";
-import blogPostImage1 from "@/../public/Blag Page/blog post/1postImage.svg";
-import blogPostImage2 from "@/../public/Blag Page/blog post/2postImage.svg";
+// import blogPostImage from "@/../public/Blag Page/blog post/postImage.svg";
+// import blogPostImage1 from "@/../public/Blag Page/blog post/1postImage.svg";
+// import blogPostImage2 from "@/../public/Blag Page/blog post/2postImage.svg";
 import Footer from "@/app/components/Footer";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { firestore } from "@/lib/fireBaseConfig";
 import { useAuthContext } from "../../../../../useContext/AuthContext";
 import { LoaderCircle } from "lucide-react";
 
 const BlogHero = () => {
-  const [loading, setLoading] = useState(true)
-  const [blogData, setBlogData] = useState([
-    {
-      title: "How to Build a Climate-Ready Data Stack",
-      content:
-        "A practical guide for sustainability teams on integrating emissions, waste, and energy data into modern workflows.",
-      createdAt: "Insights 4 min",
-      imageUrl: blogPostImage,
-    },
-    {
-      title: "How to Build a Climate-Ready Data Stack",
-      content:
-        "A practical guide for sustainability teams on integrating emissions, waste, and energy data into modern workflows.",
-      createdAt: "Insights 4 min",
-      imageUrl: blogPostImage1,
-    },
-    {
-      title: "How to Build a Climate-Ready Data Stack",
-      content:
-        "A practical guide for sustainability teams on integrating emissions, waste, and energy data into modern workflows.",
-      createdAt: "Insights 4 min",
-      imageUrl: blogPostImage2,
-    },
-  ]);
+  const { postsData,loading } = useAuthContext()
 
-  const { user } = useAuthContext()
-
-
-  console.log("blogData", blogData)
-  
-  useEffect(() => {
-    if (!user?.uid) return;
-    
-    const getData = async () => {
-      // setLoading(true)
-      const q = query(collection(firestore, "blogPost"), where("uid", "==", user.uid));
-      let array = []
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach((doc) => {
-        console.log("imp", doc.data());
-        array.push(doc.data());
-      });
-
-      setBlogData((s) => [...s, ...array]);
-      setLoading(false)
-    }
-
-    getData()
-
-  }, [user])
-  console.log("blogData =>", blogData)
-
-
-
-
+  console.log("blogData000", postsData)
 
   return (
     <div className="flex flex-col">
@@ -81,35 +25,35 @@ const BlogHero = () => {
 
         <div className="flex flex-wrap gap-[16px] p-[8px]">
           {
-            blogData.map((e, i) => {
+            postsData.map((e, i) => {
               return (
-                  <div
-                    key={i}
-                    className="flex flex-col gap-[20px] mb-[20px] w-full lg:w-[calc(50%-8px)]"
-                  >
-                    <Image
-                      height={50}
-                      width={50}
-                      src={e.imageUrl}
-                      alt="blogHero image"
-                      className="h-auto w-auto rounded-2xl"
-                    />
+                <div
+                  key={i}
+                  className="flex flex-col gap-[20px] mb-[20px] w-full lg:w-[calc(50%-8px)]"
+                >
+                  <Image
+                    height={50}
+                    width={50}
+                    src={e.imageUrl}
+                    alt="blogHero image"
+                    className="h-auto w-auto rounded-2xl"
+                  />
 
-                    <div className="flex flex-col gap-[4px]">
-                      <p className="text-[22px] leading-[28px] font-semibold ">
-                        {e.title}
-                      </p>
-                      <p className="text-[12px] text-gray-500 leading-[16px] font-normal ">
-                        {new Date(e.createdAt).toLocaleString()}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-[16px] leading-[20px] text-gray-700 font-normal">
-                        {e.content}
-                      </p>
-                    </div>
+                  <div className="flex flex-col gap-[4px]">
+                    <p className="text-[22px] leading-[28px] font-semibold ">
+                      {e.title}
+                    </p>
+                    <p className="text-[12px] text-gray-500 leading-[16px] font-normal ">
+                      {new Date(e.createdAt).toLocaleString()}
+                    </p>
                   </div>
+
+                  <div>
+                    <p className="text-[16px] leading-[20px] text-gray-700 font-normal">
+                      {e.content}
+                    </p>
+                  </div>
+                </div>
               );
             })
           }
@@ -118,7 +62,7 @@ const BlogHero = () => {
 
       <div className="flex justify-center my-4">
         {
-            loading && <LoaderCircle className='animate-spin z-50 ' />
+          loading && <LoaderCircle className='animate-spin z-50 ' />
         }
       </div>
 

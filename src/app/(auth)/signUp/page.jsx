@@ -23,7 +23,7 @@ const initialData = {
 
 const SignUp = () => {
   const { isAuth, setState } = useAuthContext();
-  // const [uersData, setUsersData] = useState([]);
+  const year = new Date().getFullYear()
   const [inputData, setInputData] = useState(initialData);
   const [loading, setLoading] = useState(false);
   const route = useRouter()
@@ -187,7 +187,7 @@ const SignUp = () => {
           </li>
         </ul>
         <p className="text-[16px] leading-[22px]">
-          © {new Date().getFullYear()} · All rights reserved
+          © {year} · All rights reserved
         </p>
       </div>
     </div>

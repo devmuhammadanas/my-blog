@@ -1,10 +1,13 @@
+'use client'
 import React from 'react'
 import { LayoutDashboard } from "lucide-react";
 import { ChartBarStacked, Rss, StickyNote, LogOut } from "lucide-react";
 import { House } from 'lucide-react';
 import Link from 'next/link';
+import { useAuthContext } from '../../../useContext/AuthContext';
 
 const SideBar = () => {
+  const {logout, getPostData} = useAuthContext()
   return (
     <div className="flex flex-col justify-between w-1/6 bg-white">
         <p className="text-xl mt-3.5 text-center font-bold text-shadow-lg">
@@ -43,7 +46,9 @@ const SideBar = () => {
             </Link>
           </li>
         </ul>
-        <div className="border-t-gray-900 shadow-2xl p-3 flex gap-3.5 ">
+        <div className="border-t-gray-900 shadow-2xl p-3 flex gap-3.5 cursor-pointer "
+        onClick={logout}
+        >
           <LogOut className="text-gray-600" />
           <p className="text-gray-600">Logout</p>
         </div>

@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import Hero from './sections/Hero'
 import EveryThink from './sections/EveryThink'
@@ -7,18 +8,29 @@ import TheJournal from './sections/TheJournal'
 import About from './sections/About'
 import ReadTo from './sections/ReadTo'
 import Footer from '../components/Footer'
+import { useAuthContext } from '../../../useContext/AuthContext'
 
 const Home = () => {
+  const {loadingState} = useAuthContext()
   return (
     <main>
-      <Hero />
-      <EveryThink />
-      <Clarity />
-      <Whychose />
-      <TheJournal />
-      <About />
-      <ReadTo />
-      <Footer />
+
+      {
+        loadingState ? <div>Loading...</div>
+        :
+        <div>
+          <Hero />
+          <EveryThink />
+          <Clarity />
+          <Whychose />
+          <TheJournal />
+          <About />
+          <ReadTo />
+          <Footer />
+
+        </div>
+      }
+
     </main>
   )
 }
