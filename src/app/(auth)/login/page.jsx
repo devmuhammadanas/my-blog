@@ -13,13 +13,8 @@ import { LoaderCircle } from "lucide-react";
 const initialData = { email: "", password: "" };
 
 const Login = () => {
-  const { isAuth, user, setState, } = useAuthContext();
-  const [year, setYear] = useState(null);
-
-
-  useEffect(() => {
-    setYear(new Date().getFullYear());
-  }, []);
+  const { isAuth, setState, } = useAuthContext();
+  const year = new Date().getFullYear()
 
   const [usersData, setUserData] = useState([]);
   const [inputData, setInputData] = useState(initialData);

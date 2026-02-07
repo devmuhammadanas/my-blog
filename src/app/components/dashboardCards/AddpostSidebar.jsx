@@ -13,7 +13,7 @@ const initialBlogData = { title: '', slug: '', category: '', content: '' }
 
 export default function AddpostSidbar() {
     const [open, setOpen] = useState(false);
-    const { user } = useAuthContext()
+    const { user, getData } = useAuthContext()
     const [imageFile, setImageFile] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -98,6 +98,8 @@ export default function AddpostSidbar() {
       setBlogData(initialBlogData);
       setImageFile(null);
       setOpen(false);
+      getData()
+
     } catch (err) {
       console.error(err);
       toast.error("Failed to publish post");

@@ -2,44 +2,13 @@
 import AddpostSidbar from "@/app/components/dashboardCards/AddpostSidebar";
 import { BlogpostsCard } from "@/app/components/dashboardCards/cards";
 import SideBar from "@/app/components/SideBar";
-import { UserPlus, StickyNote, Heart, Eye } from "lucide-react";
 import { UserRoundPen } from "lucide-react";
 import { Search } from "lucide-react";
-import React from "react";
 import { useAuthContext } from "../../../../../useContext/AuthContext";
+import ShowValueCards from "@/app/components/dashboardCards/ShowValueCards";
 
 const AddPost = () => {
-  const {user} = useAuthContext()
-  const userInfo = [
-    {
-      icon: UserPlus,
-      heading: 18.356,
-      text: "Followers",
-      bgcolor: "bg-red-100",
-      textcolor: "text-red-400",
-    },
-    {
-      icon: StickyNote,
-      heading: 18.356,
-      text: "Posts",
-      bgcolor: "bg-green-100",
-      textcolor: "text-green-400",
-    },
-    {
-      icon: Heart,
-      heading: 18.356,
-      text: "Like",
-      bgcolor: "bg-blue-100",
-      textcolor: "text-blue-400",
-    },
-    {
-      icon: Eye,
-      heading: 18.356,
-      text: "Views",
-      bgcolor: "bg-orange-100",
-      textcolor: "text-orange-400",
-    },
-  ];
+  const { user } = useAuthContext()
 
   const profileName = user?.fullName
   return (
@@ -63,28 +32,8 @@ const AddPost = () => {
           </div>
         </div>
 
-        <div className="flex p-4 gap-4.5">
-          {userInfo.map((e, i) => {
-            let Icon = e.icon;
-            return (
-              <div
-                key={i}
-                className="flex flex-col justify-center items-center bg-white shadow-2xl py-2.5 w-1/4 rounded-2xl flex flex-col gap-2.5"
-              >
-                <Icon
-                  className={`${e.bgcolor} ${e.textcolor} h-[32px] w-[32px] p-1.5 rounded-xl`}
-                />
-                <div className="flex flex-col items-center justify-center">
-                  <p className="font-bold text-xl tracking-[1px]">
-                    {e.heading}
-                  </p>
-                  <p className="text-xs font-semibold text-gray-400">
-                    {e.text}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
+        <div className="w-full">
+          <ShowValueCards />
         </div>
 
         <div className="p-7 flex justify-end">
